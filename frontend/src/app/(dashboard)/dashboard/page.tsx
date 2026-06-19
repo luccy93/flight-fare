@@ -111,7 +111,7 @@ export default function DashboardPage() {
           <h1 className="text-3xl font-bold text-secondary-900 dark:text-white">
             Welcome back,{" "}
             <span className="gradient-text">
-              {user?.first_name || user?.username || "User"}
+              {user?.full_name || user?.username || "User"}
             </span>
           </h1>
           <p className="text-secondary-500 dark:text-secondary-400 mt-1">
