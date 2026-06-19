@@ -10,7 +10,7 @@ interface PredictionInput {
   departure_date: string;
   departure_time: string;
   arrival_time: string;
-  total_stops: number;
+  total_stops: string | number;
   cabin_class: string;
 }
 
@@ -26,7 +26,7 @@ interface PredictionResult {
   source: string;
   destination: string;
   departure_date: string;
-  total_stops: number;
+  total_stops: string | number;
   cabin_class: string;
 }
 
