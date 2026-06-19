@@ -14,6 +14,8 @@ import { Label } from "@/components/ui/label";
 import api from "@/lib/api";
 import { toast } from "sonner";
 
+export const dynamic = "force-dynamic";
+
 const resetSchema = z
   .object({
     password: z
