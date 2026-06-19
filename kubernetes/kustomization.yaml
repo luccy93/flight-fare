@@ -1,0 +1,39 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: flight-fare
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secret.yaml
+  - postgres-deployment.yaml
+  - postgres-service.yaml
+  - redis-deployment.yaml
+  - redis-service.yaml
+  - backend-deployment.yaml
+  - backend-service.yaml
+  - backend-hpa.yaml
+  - frontend-deployment.yaml
+  - frontend-service.yaml
+  - frontend-hpa.yaml
+  - ingress.yaml
+
+commonLabels:
+  app.kubernetes.io/managed-by: kustomize
+  app.kubernetes.io/version: "1.0.0"
+
+images:
+  - name: flight-fare-backend
+    newName: ghcr.io/your-org/flight-fare-backend
+    newTag: latest
+  - name: flight-fare-frontend
+    newName: ghcr.io/your-org/flight-fare-frontend
+    newTag: latest
+
+configMapGenerator:
+  - name: flight-fare-postgres-init
+    files:
+      - ../database/init.sql
+    options:
+      disableNameSuffixHash: true

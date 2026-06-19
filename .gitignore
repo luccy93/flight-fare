@@ -1,0 +1,82 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+*.whl
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+.coverage
+coverage.xml
+*.cover
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+*.log
+
+# Node
+node_modules/
+.next/
+out/
+.build/
+dist/
+.npm/
+.eslintcache
+*.tsbuildinfo
+next-env.d.ts
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-workspace
+*.sublime-project
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+*.lnk
+
+# Data files
+*.xlsx
+*.csv
+*.xls
+data/
+
+# Jupyter
+Untitled.ipynb
+.ipynb_checkpoints/
+
+# Docker
+.docker/
+
+# Kubernetes local overrides
+kubernetes/**/kustomize-overlay/
+
+# Project specific
+notebooks/
+*.zip
+*.tar.gz
+catboost_info/
+*.db
+*.bat

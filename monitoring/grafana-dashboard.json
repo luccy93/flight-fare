@@ -1,0 +1,272 @@
+{
+  "title": "Flight Fare Prediction - Monitoring Dashboard",
+  "uid": "flight-fare-dashboard",
+  "version": 1,
+  "tags": ["flight-fare", "prediction", "ml"],
+  "timezone": "browser",
+  "editable": true,
+  "refresh": "30s",
+  "panels": [
+    {
+      "title": "API Request Rate",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[5m])",
+          "legendFormat": "{{method}} {{endpoint}}",
+          "refId": "A"
+        }
+      ],
+      "yaxes": [
+        { "format": "reqps", "label": "Requests/sec" },
+        { "format": "short" }
+      ],
+      "legend": { "show": true, "values": true, "min": false, "max": false, "current": true, "total": false, "avg": true },
+      "description": "HTTP request rate per second across all API endpoints"
+    },
+    {
+      "title": "Prediction Latency (P50, P95, P99)",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(http_request_duration_seconds_bucket{prediction_endpoint=\"true\"}[5m])) by (le))",
+          "legendFormat": "P50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{prediction_endpoint=\"true\"}[5m])) by (le))",
+          "legendFormat": "P95",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket{prediction_endpoint=\"true\"}[5m])) by (le))",
+          "legendFormat": "P99",
+          "refId": "C"
+        }
+      ],
+      "yaxes": [
+        { "format": "s", "label": "Latency" },
+        { "format": "short" }
+      ],
+      "legend": { "show": true, "values": true, "min": true, "max": true, "current": true, "avg": true },
+      "description": "Prediction API latency percentiles"
+    },
+    {
+      "title": "Error Rate by Status Code",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{status_code=~\"5..\"}[5m])) by (status_code)",
+          "legendFormat": "5xx - {{status_code}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(http_requests_total{status_code=~\"4..\"}[5m])) by (status_code)",
+          "legendFormat": "4xx - {{status_code}}",
+          "refId": "B"
+        }
+      ],
+      "yaxes": [
+        { "format": "reqps", "label": "Errors/sec" },
+        { "format": "short" }
+      ],
+      "legend": { "show": true, "values": true, "avg": true, "current": true, "max": true },
+      "description": "API error rate broken down by HTTP status code"
+    },
+    {
+      "title": "Active Users",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 8 },
+      "targets": [
+        {
+          "expr": "count(count by (user_id) (http_requests_total[30m]))",
+          "legendFormat": "Active Users (30m)",
+          "refId": "A"
+        },
+        {
+          "expr": "count(count by (user_id) (http_requests_total[24h]))",
+          "legendFormat": "Active Users (24h)",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 50 },
+              { "color": "red", "value": 200 }
+            ]
+          }
+        }
+      },
+      "description": "Number of unique active users in the last 30 minutes and 24 hours"
+    },
+    {
+      "title": "Total Predictions Made",
+      "type": "stat",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 8 },
+      "targets": [
+        {
+          "expr": "sum(predictions_total)",
+          "legendFormat": "Total Predictions",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(predictions_total[1h]))",
+          "legendFormat": "Prediction Rate (1h)",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "decimals": 0,
+          "color": { "mode": "thresholds" },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null },
+              { "color": "green", "value": 1000 },
+              { "color": "yellow", "value": 10000 }
+            ]
+          }
+        }
+      },
+      "description": "Total number of price predictions made"
+    },
+    {
+      "title": "CPU Usage by Service",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 16 },
+      "targets": [
+        {
+          "expr": "rate(process_cpu_seconds_total{job=\"backend\"}[5m]) * 100",
+          "legendFormat": "Backend CPU",
+          "refId": "A"
+        }
+      ],
+      "yaxes": [
+        { "format": "percent", "label": "CPU Usage" },
+        { "format": "short" }
+      ],
+      "legend": { "show": true, "values": true, "avg": true, "current": true, "max": true },
+      "description": "CPU usage percentage for backend service"
+    },
+    {
+      "title": "Memory Usage by Service",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 16 },
+      "targets": [
+        {
+          "expr": "process_resident_memory_bytes{job=\"backend\"} / 1024 / 1024",
+          "legendFormat": "Backend Memory",
+          "refId": "A"
+        }
+      ],
+      "yaxes": [
+        { "format": "MB", "label": "Memory" },
+        { "format": "short" }
+      ],
+      "legend": { "show": true, "values": true, "avg": true, "current": true, "max": true },
+      "description": "Memory usage in MB for backend service"
+    },
+    {
+      "title": "Database Connection Pool",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "targets": [
+        {
+          "expr": "pg_stat_database_numbackends",
+          "legendFormat": "Active Connections",
+          "refId": "A"
+        },
+        {
+          "expr": "pg_stat_database_xact_commit + pg_stat_database_xact_rollback",
+          "legendFormat": "Total Transactions",
+          "refId": "B"
+        }
+      ],
+      "yaxes": [
+        { "format": "short", "label": "Connections" },
+        { "format": "short" }
+      ],
+      "description": "PostgreSQL connection pool and transaction metrics"
+    },
+    {
+      "title": "Redis Cache Hit Ratio",
+      "type": "graph",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+      "targets": [
+        {
+          "expr": "rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) * 100",
+          "legendFormat": "Cache Hit Rate",
+          "refId": "A"
+        }
+      ],
+      "yaxes": [
+        { "format": "percent", "label": "Hit Rate", "min": 0, "max": 100 },
+        { "format": "short" }
+      ],
+      "legend": { "show": true, "values": true, "avg": true, "current": true },
+      "description": "Redis cache hit ratio percentage"
+    },
+    {
+      "title": "HTTP Request Duration",
+      "type": "heatmap",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 32 },
+      "targets": [
+        {
+          "expr": "rate(http_request_duration_seconds_bucket[5m])",
+          "format": "heatmap",
+          "legendFormat": "{{le}}",
+          "refId": "A"
+        }
+      ],
+      "description": "Heatmap of HTTP request durations"
+    }
+  ],
+  "schemaVersion": 30,
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {
+    "refresh_intervals": ["5s", "10s", "30s", "1m", "5m", "15m", "30m", "1h"],
+    "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
+  },
+  "templating": {
+    "list": [
+      {
+        "type": "datasource",
+        "name": "DS_PROMETHEUS",
+        "label": "Prometheus",
+        "query": "prometheus",
+        "refresh": 1
+      },
+      {
+        "type": "interval",
+        "name": "interval",
+        "label": "Interval",
+        "query": "1m,5m,10m,30m,1h,6h,12h,24h",
+        "current": { "text": "5m", "value": "5m" },
+        "refresh": 2
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "type": "events",
+        "name": "Deployments",
+        "datasource": { "type": "grafana" },
+        "showIn": 0,
+        "iconColor": "rgba(255, 96, 96, 1)"
+      }
+    ]
+  }
+}
