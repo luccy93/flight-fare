@@ -2,9 +2,9 @@
 
 import { motion } from 'framer-motion'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { FareTrendChart } from '@/components/charts/FareTrendChart'
-import { AirlineComparisonChart } from '@/components/charts/AirlineComparisonChart'
-import { MonthlyTrendChart } from '@/components/charts/MonthlyTrendChart'
+import FareTrendChart from '@/components/charts/FareTrendChart'
+import AirlineComparisonChart from '@/components/charts/AirlineComparisonChart'
+import MonthlyTrendChart from '@/components/charts/MonthlyTrendChart'
 import { TrendingUp, Brain, Users, BarChart3, ArrowUpRight } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 
