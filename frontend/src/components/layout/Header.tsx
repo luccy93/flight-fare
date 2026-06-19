@@ -129,7 +129,7 @@ export default function Header() {
                         <span>{link.label}</span>
                       </Link>
                     ))}
-                    {user?.is_staff && (
+                    {user?.is_admin && (
                       <Link
                         href="/admin"
                         onClick={() => setShowUserMenu(false)}
