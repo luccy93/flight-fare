@@ -1,11 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL =
-  typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_URL
-    ? String(process.env.NEXT_PUBLIC_API_URL).trim()
-    : typeof window !== "undefined"
-    ? ""
-    : "http://localhost:8000";
+const API_BASE_URL = "https://flight-fare-1egh.onrender.com";
 
 const api = axios.create({
   baseURL: API_BASE_URL,

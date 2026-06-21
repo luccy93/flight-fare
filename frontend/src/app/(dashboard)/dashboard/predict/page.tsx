@@ -102,6 +102,7 @@ const priceCategoryVariant = (category: string) => {
 
 export default function PredictPage() {
   const [showResults, setShowResults] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { createPrediction, isCreating, predictionResult } =
     useCreatePrediction();
 
@@ -136,8 +137,17 @@ export default function PredictPage() {
   };
 
   const onSubmit = async (data: PredictFormData) => {
-    await createPrediction.mutateAsync(data);
-    setShowResults(true);
+    setErrorMessage(null);
+    try {
+      await createPrediction.mutateAsync(data);
+      setShowResults(true);
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.detail ||
+        err?.message ||
+        "Prediction failed. Please try again.";
+      setErrorMessage(msg);
+    }
   };
 
   const handleNewPrediction = () => {
@@ -303,6 +313,11 @@ export default function PredictPage() {
                     </div>
                   </div>
 
+                  {errorMessage && (
+                    <div className="p-3 rounded-lg bg-danger-50 dark:bg-danger-950 border border-danger-200 dark:border-danger-800 text-danger-700 dark:text-danger-300 text-sm">
+                      {errorMessage}
+                    </div>
+                  )}
                   <div className="flex justify-end pt-4">
                     <Button
                       type="submit"
