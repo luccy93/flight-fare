@@ -68,6 +68,29 @@ async def lifespan(app: FastAPI):
     logger.info("Starting up - creating database tables")
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    logger.info("Seeding default user")
+    try:
+        from app.database import async_session
+        from app.models.user import User
+        from app.core.security import get_password_hash
+        from sqlalchemy import select
+        async with async_session() as session:
+            existing = await session.execute(select(User).where(User.email == "demo@flightfare.com"))
+            if not existing.scalar_one_or_none():
+                demo = User(
+                    email="demo@flightfare.com",
+                    username="demo",
+                    password_hash=get_password_hash("demo12345"),
+                    full_name="Demo User",
+                    is_admin=True,
+                )
+                session.add(demo)
+                await session.commit()
+                logger.info("Default user created: demo@flightfare.com / demo12345")
+            else:
+                logger.info("Default user already exists")
+    except Exception as e:
+        logger.warning(f"Could not seed default user: {e}")
     logger.info("Initializing cache service")
     await cache_service.init()
     logger.info("Application startup complete")
