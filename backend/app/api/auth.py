@@ -32,14 +32,17 @@ async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
         )
         if existing.scalar_one_or_none():
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email or username already registered")
+        password_hash = get_password_hash(payload.password)
         user = User(
             email=payload.email,
             username=payload.username,
-            password_hash=get_password_hash(payload.password),
+            password_hash=password_hash,
             full_name=payload.full_name,
         )
+        import logging; logging.warning(f"User created: email={user.email}, has_id={user.id is not None}, has_created_at={user.created_at is not None}")
         db.add(user)
         await db.flush()
+        import logging; logging.warning(f"After flush: id={user.id}, created_at={user.created_at}")
         return UserResponse(
             id=user.id,
             email=user.email,
@@ -47,11 +50,12 @@ async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
             full_name=user.full_name,
             is_active=user.is_active,
             is_admin=user.is_admin,
-            created_at=user.created_at,
+            created_at=user.created_at or datetime.now(timezone.utc),
         )
     except HTTPException:
         raise
     except Exception as e:
+        import logging; logging.error(f"Register exception: {e}", exc_info=True)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
