@@ -1,7 +1,6 @@
 # Flight Fare Prediction
 
 **Live Demo:** [https://flight-fare-ten.vercel.app](https://flight-fare-ten.vercel.app)  
-**Test Account:** `demo@flightfare.com` / `demo12345`
 
 A production-grade machine learning application that predicts flight ticket prices based on travel parameters. Built with FastAPI, Next.js, PostgreSQL, and Redis, with comprehensive monitoring and CI/CD.
 
