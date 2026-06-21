@@ -1,9 +1,5 @@
 # Flight Fare Prediction
 
-[![Frontend](https://img.shields.io/badge/Frontend-Vercel-000?logo=vercel)](https://flight-fare-ten.vercel.app)
-[![Backend](https://img.shields.io/badge/Backend-Render-46E3B7?logo=render)](https://flight-fare-1egh.onrender.com)
-[![API Docs](https://img.shields.io/badge/API-Swagger-85EA2D?logo=swagger)](https://flight-fare-1egh.onrender.com/docs)
-
 **Live Demo:** [https://flight-fare-ten.vercel.app](https://flight-fare-ten.vercel.app)  
 **Test Account:** `demo@flightfare.com` / `demo12345`
 
