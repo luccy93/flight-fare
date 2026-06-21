@@ -24,9 +24,6 @@ from app.schemas.user import (
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
-import logging
-logger = logging.getLogger(__name__)
-
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
     try:
@@ -43,12 +40,18 @@ async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
         )
         db.add(user)
         await db.flush()
-        await db.refresh(user)
-        return user
+        return UserResponse(
+            id=user.id,
+            email=user.email,
+            username=user.username,
+            full_name=user.full_name,
+            is_active=user.is_active,
+            is_admin=user.is_admin,
+            created_at=user.created_at,
+        )
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Register failed: {e}", exc_info=True)
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 
