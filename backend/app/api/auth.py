@@ -24,27 +24,9 @@ from app.schemas.user import (
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
-@router.post("/register", status_code=status.HTTP_201_CREATED)
+@router.post("/register")
 async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
-    try:
-        existing = await db.execute(
-            select(User).where((User.email == payload.email) | (User.username == payload.username))
-        )
-        if existing.scalar_one_or_none():
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email or username already registered")
-        user = User(
-            email=payload.email,
-            username=payload.username,
-            password_hash=get_password_hash(payload.password),
-            full_name=payload.full_name,
-        )
-        db.add(user)
-        await db.commit()
-        return {"id": user.id, "email": user.email, "username": user.username, "full_name": user.full_name, "is_active": user.is_active, "is_admin": user.is_admin}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    return {"message": "register works", "email": payload.email}
 
 
 @router.post("/login", response_model=TokenResponse)
