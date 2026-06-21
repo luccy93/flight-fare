@@ -25,9 +25,9 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
 @router.post("/register")
-async def register(payload: dict, db: AsyncSession = Depends(get_db)):
+async def register():
     import pydantic
-    return {"message": "register works", "email": payload.get("email", "none"), "pydantic_version": pydantic.__version__}
+    return {"message": "register works", "pydantic_version": pydantic.__version__}
 
 
 @router.post("/login", response_model=TokenResponse)
