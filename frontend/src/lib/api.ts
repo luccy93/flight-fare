@@ -1,16 +1,11 @@
 import axios from "axios";
 
-let API_BASE_URL = "http://localhost:8000";
-try {
-  if (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_URL) {
-    const url = String(process.env.NEXT_PUBLIC_API_URL).trim();
-    if (url && url !== "undefined" && url.startsWith("http")) {
-      API_BASE_URL = url;
-    }
-  }
-} catch (e) {
-  // fallback to localhost
-}
+const API_BASE_URL =
+  typeof process !== "undefined" && process.env?.NEXT_PUBLIC_API_URL
+    ? String(process.env.NEXT_PUBLIC_API_URL).trim()
+    : typeof window !== "undefined"
+    ? ""
+    : "http://localhost:8000";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
